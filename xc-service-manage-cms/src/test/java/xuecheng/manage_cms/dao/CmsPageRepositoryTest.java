@@ -2,14 +2,14 @@ package xuecheng.manage_cms.dao;
 
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.CmsPageParam;
+import com.xuecheng.manage_cms.ManageCmsApplication;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  * ${Author}: jason.zhao
  * 2019/3/3 17:22
  **/
-@SpringBootTest
+@SpringBootTest(classes=ManageCmsApplication.class)
 @RunWith(SpringRunner.class)
 public class CmsPageRepositoryTest {
     @Autowired
@@ -55,6 +55,23 @@ public class CmsPageRepositoryTest {
         cmsPageRepository.save(cmsPage);
         System.out.println(cmsPage);
     }
+    @Test
+    public void testFindAllByExample(){
+        int page=0;
+        int size=10;
+        Pageable pageable = PageRequest.of(page, size);
+        CmsPage cmsPage = new CmsPage();
+        cmsPage.setPageAliase("轮播");
+
+        ExampleMatcher matching = ExampleMatcher.matching();
+        matching =  matching.withMatcher("pageAliase",ExampleMatcher.GenericPropertyMatchers.contains());
+        Example<CmsPage> example = Example.of(cmsPage, matching);
+        Page<CmsPage> all = cmsPageRepository.findAll(example, pageable);
+        List<CmsPage> content = all.getContent();
+        System.out.println(content);
+
+
+    }
 
     //删除
     @Test
@@ -73,4 +90,12 @@ public class CmsPageRepositoryTest {
             cmsPageRepository.save(cmsPage);
         }
     }*/
+  @Test
+  public   void  testStringUtil(){
+      String s ="WangWa";
+      System.out.println(StringUtils.upperCase(s));
+      System.out.println(StringUtils.reverse(s));
+
+      System.out.println(StringUtils.replaceFirst(s,StringUtils.substring(s,0,1),StringUtils.substring(s,0,1).toLowerCase()));;
+  }
 }
